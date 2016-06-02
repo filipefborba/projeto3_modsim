@@ -17,6 +17,7 @@ import math
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from numpy import linspace
+from matplotlib.widgets import Slider, Button, RadioButtons
 
 #Parâmetros
 m = 0.175# Massa do disco (kg)
@@ -29,7 +30,7 @@ Cd0 = 0.08
 Clalpha = 1.4
 Cdalpha = 2.72
 
-angulo = 7.5 # ângulo de arremesso em graus˚
+angulo = 10 # ângulo de arremesso em graus˚
 alpha = (angulo * math.pi)/180 # ângulo de arremesso em radianos
 alpha0 = (-4*math.pi)/180
 
@@ -71,18 +72,74 @@ Valores_iniciais = [x0, y0, vx0, vy0]
 #Odeint - Realiza a integração numérica
 Valores = odeint(Func, Valores_iniciais, Tempos)
 
-#Plotagem do Gráfico
-plt.plot(Valores[:,0], Valores[:,1])
+
+################################################
+#Sliders
+################################################
+
+#Gráfico Principal
+#-----------------
+#É o gráfico inicial, antes das interações com os sliders
+fig, ax = plt.subplots()
+plt.subplots_adjust(left=0.25, bottom=0.25)
+l, = plt.plot(Valores[:,0], Valores[:,1], lw=2, color='green')
 plt.xlabel('Distância (m)')
 plt.ylabel('Altura (m)')
-plt.axis([0, max(Valores[:,0]), 0, 12])
+plt.axis([0, 30, 0, 12])
 plt.title(r'Trajetória do Frisbee')
+
+#Definição e criação dos sliders
+axcolor = 'lightgoldenrodyellow'
+axvelocidade = plt.axes([0.25, 0.1, 0.65, 0.03], axisbg=axcolor)
+axangulo = plt.axes([0.25, 0.15, 0.65, 0.03], axisbg=axcolor)
+svelocidade = Slider(axvelocidade, 'Velocidade inicial', 10, 20, valinit=14)
+sangulo = Slider(axangulo, 'Ângulo', 0, 60, valinit=7.5)
+
+#Atualização dos valores
+def update(val):
+    vel = svelocidade.val
+    ang = sangulo.val
+    angulo = ang
+    alpha = (angulo * math.pi)/180
+    x0 = 0
+    y0 = 1
+    vx0 = vel * math.cos(alpha)
+    vy0 = vel * math.sin(alpha)
+    valores_iniciais_atualizados = [x0, y0, vx0, vy0]
+    valores_atualizados = odeint(Func, valores_iniciais_atualizados, Tempos)
+    l.set_xdata(valores_atualizados[:,0])
+    l.set_ydata(valores_atualizados[:,1])
+    fig.canvas.draw_idle()
+    print(vx0)
+    print(vy0)
+svelocidade.on_changed(update)
+sangulo.on_changed(update)
+
+#Botão de reset
+resetax = plt.axes([0.8, 0.025, 0.1, 0.04])
+button = Button(resetax, 'Reset', color=axcolor, hovercolor='0.975')
+
+#Função do botão reset
+def reset(event):
+    svelocidade.reset()
+    sangulo.reset()
+button.on_clicked(reset)
+
+#Mudar cor da linha do gráfico
+rax = plt.axes([0.025, 0.5, 0.15, 0.15], axisbg=axcolor)
+radio = RadioButtons(rax, ('green', 'blue', 'red'), active=0)
+def colorfunc(label):
+    l.set_color(label)
+    fig.canvas.draw_idle()
+radio.on_clicked(colorfunc)
+
+#Plotagem do Gráfico
 plt.show()
 
-plt.plot(Tempos, Valores[:,2])
-plt.title(r'Vx')
-plt.show()
+# plt.plot(Tempos, Valores[:,2])
+# plt.title(r'Vx')
+# plt.show()
 
-plt.plot(Tempos, Valores[:,3])
-plt.title(r'Vy')
-plt.show()
+# plt.plot(Tempos, Valores[:,3])
+# plt.title(r'Vy')
+# plt.show()
