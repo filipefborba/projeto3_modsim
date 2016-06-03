@@ -29,13 +29,12 @@ Cl0 = 0.15
 Cd0 = 0.08
 Clalpha = 1.4
 Cdalpha = 2.72
-
-angulo = 10 # ângulo de arremesso em graus˚
-alpha = (angulo * math.pi)/180 # ângulo de arremesso em radianos
 alpha0 = (-4*math.pi)/180
 
-def Func(S, t): # S = [x, y, vx, vy]
-    
+angulo = 7.5 # ângulo de arremesso em graus˚
+alpha = (angulo * math.pi)/180 # ângulo de arremesso em radianos
+
+def Func(S, t, alpha): # S = [x, y, vx, vy]
     dxdt = S[2]
     dydt = S[3]
     Cl = Cl0 + (Clalpha * alpha)
@@ -70,7 +69,7 @@ Valores_iniciais = [x0, y0, vx0, vy0]
 
 
 #Odeint - Realiza a integração numérica
-Valores = odeint(Func, Valores_iniciais, Tempos)
+Valores = odeint(Func, Valores_iniciais, Tempos, (alpha,))
 
 
 ################################################
@@ -81,7 +80,7 @@ Valores = odeint(Func, Valores_iniciais, Tempos)
 #-----------------
 #É o gráfico inicial, antes das interações com os sliders
 fig, ax = plt.subplots()
-plt.subplots_adjust(left=0.25, bottom=0.25)
+plt.subplots_adjust(left=0.1, bottom=0.3)
 l, = plt.plot(Valores[:,0], Valores[:,1], lw=2, color='green')
 plt.xlabel('Distância (m)')
 plt.ylabel('Altura (m)')
@@ -90,28 +89,23 @@ plt.title(r'Trajetória do Frisbee')
 
 #Definição e criação dos sliders
 axcolor = 'lightgoldenrodyellow'
-axvelocidade = plt.axes([0.25, 0.1, 0.65, 0.03], axisbg=axcolor)
-axangulo = plt.axes([0.25, 0.15, 0.65, 0.03], axisbg=axcolor)
+axvelocidade = plt.axes([0.22, 0.1, 0.65, 0.03], axisbg=axcolor)
+axangulo = plt.axes([0.22, 0.15, 0.65, 0.03], axisbg=axcolor)
 svelocidade = Slider(axvelocidade, 'Velocidade inicial', 10, 20, valinit=14)
-sangulo = Slider(axangulo, 'Ângulo', 0, 60, valinit=7.5)
+sangulo = Slider(axangulo, 'Ângulo', 0, 60, valinit=angulo)
 
 #Atualização dos valores
 def update(val):
     vel = svelocidade.val
     ang = sangulo.val
-    angulo = ang
-    alpha = (angulo * math.pi)/180
-    x0 = 0
-    y0 = 1
-    vx0 = vel * math.cos(alpha)
-    vy0 = vel * math.sin(alpha)
-    valores_iniciais_atualizados = [x0, y0, vx0, vy0]
-    valores_atualizados = odeint(Func, valores_iniciais_atualizados, Tempos)
+    alpha_atualizado = (ang * math.pi)/180
+    vx0_atualizado = vel * math.cos(alpha_atualizado)
+    vy0_atualizado = vel * math.sin(alpha_atualizado)
+    Valores_iniciais = [x0, y0, vx0_atualizado, vy0_atualizado]
+    valores_atualizados = odeint(Func, Valores_iniciais, Tempos, (alpha_atualizado,))
     l.set_xdata(valores_atualizados[:,0])
     l.set_ydata(valores_atualizados[:,1])
     fig.canvas.draw_idle()
-    print(vx0)
-    print(vy0)
 svelocidade.on_changed(update)
 sangulo.on_changed(update)
 
@@ -126,12 +120,12 @@ def reset(event):
 button.on_clicked(reset)
 
 #Mudar cor da linha do gráfico
-rax = plt.axes([0.025, 0.5, 0.15, 0.15], axisbg=axcolor)
-radio = RadioButtons(rax, ('green', 'blue', 'red'), active=0)
-def colorfunc(label):
-    l.set_color(label)
-    fig.canvas.draw_idle()
-radio.on_clicked(colorfunc)
+# rax = plt.axes([0.025, 0.5, 0.15, 0.15], axisbg=axcolor)
+# radio = RadioButtons(rax, ('green', 'blue', 'red'), active=0)
+# def colorfunc(label):
+#     l.set_color(label)
+#     fig.canvas.draw_idle()
+# radio.on_clicked(colorfunc)
 
 #Plotagem do Gráfico
 plt.show()
