@@ -130,10 +130,26 @@ button.on_clicked(reset)
 #Plotagem do Gráfico
 plt.show()
 
-# plt.plot(Tempos, Valores[:,2])
-# plt.title(r'Vx')
-# plt.show()
+angulo = 0
+lista_angulo = []
+lista_distancia = []
+for i in range(61):
+    alpha = (angulo * math.pi)/180
+    lista_angulo.append(i)
+    x = odeint(Func, Valores_iniciais, Tempos, (alpha,))
+    lista_distancia.append(max(x))
+    angulo += 1
 
-# plt.plot(Tempos, Valores[:,3])
-# plt.title(r'Vy')
-# plt.show()
+plt.plot(lista_distancia, lista_angulo)
+plt.xlabel('Distância (m)')
+plt.ylabel('Ângulo (˚)')
+plt.axis([0, max(lista_distancia), 0, max(lista_angulo)])
+plt.title(r'Ângulo x Distância')
+plt.show()
+
+plt.plot(Valores[:,0], velocidade)
+plt.xlabel('Distância (m)')
+plt.ylabel('Velocidade inicial (m/s)')
+plt.axis([0, 30, 0, 12])
+plt.title(r'Velocidade inicial x Distância (â = 10˚)')
+plt.show()
