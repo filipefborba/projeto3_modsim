@@ -130,38 +130,19 @@ button.on_clicked(reset)
 #Plotagem do Gráfico
 plt.show()
 
-lista_angulo = []
-lista_distancia = []
-tempos_angulo = linspace(0,60,60)
-for i in range(61):
-    alpha_grafico_angulo = (i * math.pi)/180
-    lista_angulo.append(i)
-    valores_grafico_angulo = odeint(Func, Valores_iniciais, tempos_angulo, (alpha_grafico_angulo,))
-    maximo_angulo = max(valores_grafico_angulo[:,0])
-    lista_distancia.append(maximo_angulo)
+lista_angulo = linspace(0,60,100000)
+lista_velocidade = linspace(10,20,100000)
 
-plt.plot(lista_distancia, lista_angulo)
+plt.plot(distancia, lista_angulo, lw=2)
 plt.xlabel('Distância (m)')
 plt.ylabel('Ângulo (˚)')
-plt.axis([0, max(lista_distancia), 0, max(lista_angulo)])
-plt.title(r'Ângulo x Distância')
+plt.axis([0, max(distancia), 0, max(lista_angulo)])
+plt.title(r'Distância x Ângulo')
 plt.show()
 
-lista_velocidade = []
-lista_distancia2 = []
-tempos_velocidade = linspace(10,20, 10)
-for i in range(10,21):
-    lista_velocidade.append(i)
-    vx0_velocidade = i * math.cos(alpha)
-    vy0_velocidade = i * math.sin(alpha)
-    valores_iniciais_velocidade = [0, 1, vx0_velocidade, vy0_velocidade]
-    valores_grafico_velocidade = odeint(Func, Valores_iniciais, tempos_velocidade, (alpha,))
-    maximo_velocidade = max(valores_grafico_velocidade[:,0])
-    lista_distancia2.append(maximo_velocidade)
-
-plt.plot(lista_distancia2, lista_velocidade)
+plt.plot(Valores[:,0], lista_velocidade, lw=2)
 plt.xlabel('Distância (m)')
 plt.ylabel('Velocidade inicial (m/s)')
-plt.axis([0, 30, 0, 12])
-plt.title(r'Velocidade inicial x Distância (â = 7.5˚)')
+plt.axis([0, max(Valores[:,0]), 0, max(lista_velocidade)])
+plt.title(r'Distância x Velocidade Inicial (â = 7.5˚)')
 plt.show()
