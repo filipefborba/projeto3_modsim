@@ -71,6 +71,12 @@ Valores_iniciais = [x0, y0, vx0, vy0]
 #Odeint - Realiza a integração numérica
 Valores = odeint(Func, Valores_iniciais, Tempos, (alpha,))
 
+#Verificando a distância e altura máxima
+lista_distancia_maxima = []
+for i in range(len(Valores[:,1])):
+    if Valores[i][1] > -0.05 and Valores[i][1] < 0.05:
+        lista_distancia_maxima.append(Valores[i][0])
+lista_altura_maxima = [max(Valores[:,1])]
 
 ################################################
 #Sliders
@@ -94,8 +100,23 @@ axangulo = plt.axes([0.22, 0.15, 0.65, 0.03], axisbg=axcolor)
 svelocidade = Slider(axvelocidade, 'Velocidade inicial', 10, 20, valinit=14)
 sangulo = Slider(axangulo, 'Ângulo', 0, 60, valinit=angulo)
 
+#Label da distância
+distanciafinal = lista_distancia_maxima[0]
+textstr = "Distância: {0:.2f} m".format(distanciafinal)
+props = dict(boxstyle='round', facecolor='white', alpha=1)
+axdistancia = ax.text(-0.05, -0.4, textstr, transform=ax.transAxes, fontsize=14,verticalalignment='top', bbox=props)
+
+#Label da altura
+alturafinal = lista_altura_maxima[0]
+textstr2 = "Altura: {0:.2f} m".format(alturafinal)
+axaltura = ax.text(0.3, -0.4, textstr2, transform=ax.transAxes, fontsize=14,verticalalignment='top', bbox=props)
+
 #Atualização dos valores
 def update(val):
+    global distanciafinal
+    global alturafinal
+    lista_distancia_maxima.clear()
+    lista_altura_maxima.clear()
     vel = svelocidade.val
     ang = sangulo.val
     alpha_atualizado = (ang * math.pi)/180
@@ -106,8 +127,15 @@ def update(val):
     l.set_xdata(valores_atualizados[:,0])
     l.set_ydata(valores_atualizados[:,1])
     fig.canvas.draw_idle()
+
+    for i in range(len(valores_atualizados[:,1])):
+        if valores_atualizados[i][1] > -0.05 and valores_atualizados[i][1] < 0.05:
+            distanciafinal = valores_atualizados[i][0]
+    alturafinal = valores_atualizados[i][1]
+
 svelocidade.on_changed(update)
 sangulo.on_changed(update)
+
 
 #Botão de reset
 resetax = plt.axes([0.8, 0.025, 0.1, 0.04])
@@ -130,19 +158,21 @@ button.on_clicked(reset)
 #Plotagem do Gráfico
 plt.show()
 
+
 lista_angulo = linspace(0,60,100000)
 lista_velocidade = linspace(10,20,100000)
 
-plt.plot(distancia, lista_angulo, lw=2)
+
+plt.plot(lista_x, lista_angulo, lw=2)
 plt.xlabel('Distância (m)')
 plt.ylabel('Ângulo (˚)')
-plt.axis([0, max(distancia), 0, max(lista_angulo)])
+plt.axis([0, max(lista_x), 0, max(lista_angulo)])
 plt.title(r'Distância x Ângulo')
-plt.show()
+#plt.show()
 
-plt.plot(Valores[:,0], lista_velocidade, lw=2)
+plt.plot(lista_x, lista_velocidade, lw=2)
 plt.xlabel('Distância (m)')
 plt.ylabel('Velocidade inicial (m/s)')
-plt.axis([0, max(Valores[:,0]), 0, max(lista_velocidade)])
+plt.axis([0, max(lista_x), 0, max(lista_velocidade)])
 plt.title(r'Distância x Velocidade Inicial (â = 7.5˚)')
-plt.show()
+#plt.show()
