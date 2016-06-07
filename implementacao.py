@@ -109,12 +109,14 @@ axdistancia = ax.text(-0.05, -0.4, textstr, transform=ax.transAxes, fontsize=14,
 #Label da altura
 alturafinal = lista_altura_maxima[0]
 textstr2 = "Altura: {0:.2f} m".format(alturafinal)
-axaltura = ax.text(0.3, -0.4, textstr2, transform=ax.transAxes, fontsize=14,verticalalignment='top', bbox=props)
+axaltura = ax.text(0.3, -0.4, textstr2, transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
 
 #Atualização dos valores
 def update(val):
     global distanciafinal
     global alturafinal
+    global textstr
+    global textstr2
     lista_distancia_maxima.clear()
     lista_altura_maxima.clear()
     vel = svelocidade.val
@@ -130,12 +132,17 @@ def update(val):
 
     for i in range(len(valores_atualizados[:,1])):
         if valores_atualizados[i][1] > -0.05 and valores_atualizados[i][1] < 0.05:
-            distanciafinal = valores_atualizados[i][0]
-    alturafinal = valores_atualizados[i][1]
+            lista_distancia_maxima.append(valores_atualizados[i][0])
+    distanciafinal = lista_distancia_maxima[0]
+    alturafinal = max(valores_atualizados[:,1])
+    textstr = "Distância: {0:.2f} m".format(distanciafinal)
+    textstr2 = "Altura: {0:.2f} m".format(alturafinal)
+    axdistancia = ax.text(-0.05, -0.4, textstr, transform=ax.transAxes, fontsize=14,verticalalignment='top', bbox=props)
+    axaltura = ax.text(0.3, -0.4, textstr2, transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
 
 svelocidade.on_changed(update)
 sangulo.on_changed(update)
-
+    
 
 #Botão de reset
 resetax = plt.axes([0.8, 0.025, 0.1, 0.04])
