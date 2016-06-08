@@ -113,8 +113,6 @@ axaltura = ax.text(0.3, -0.4, textstr2, transform=ax.transAxes, fontsize=14, ver
 
 #Atualização dos valores
 def update(val):
-    global distanciafinal
-    global alturafinal
     global textstr
     global textstr2
     lista_distancia_maxima.clear()
@@ -165,21 +163,16 @@ button.on_clicked(reset)
 #Plotagem do Gráfico
 plt.show()
 
-
-lista_angulo = linspace(0,60,100000)
-lista_velocidade = linspace(10,20,100000)
-
-
-plt.plot(lista_x, lista_angulo, lw=2)
-plt.xlabel('Distância (m)')
-plt.ylabel('Ângulo (˚)')
-plt.axis([0, max(lista_x), 0, max(lista_angulo)])
-plt.title(r'Distância x Ângulo')
+#plt.plot(lista_x, lista_angulo, lw=2)
+#plt.xlabel('Distância (m)')
+#plt.ylabel('Ângulo (˚)')
+#plt.axis([0, max(lista_x), 0, max(lista_angulo)])
+#plt.title(r'Distância x Ângulo')
 #plt.show()
 
-plt.plot(lista_x, lista_velocidade, lw=2)
-plt.xlabel('Distância (m)')
-plt.ylabel('Velocidade inicial (m/s)')
-plt.axis([0, max(lista_x), 0, max(lista_velocidade)])
-plt.title(r'Distância x Velocidade Inicial (â = 7.5˚)')
+#plt.plot(lista_x, lista_velocidade, lw=2)
+#plt.xlabel('Distância (m)')
+#plt.ylabel('Velocidade inicial (m/s)')
+#plt.axis([0, max(lista_x), 0, max(lista_velocidade)])
+#plt.title(r'Distância x Velocidade Inicial (â = 7.5˚)')
 #plt.show()
